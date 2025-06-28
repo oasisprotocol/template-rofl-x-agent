@@ -53,7 +53,7 @@ def load_settings() -> Settings:
         twitter_access_token=os.getenv("TWITTER_ACCESS_TOKEN"),
         twitter_access_token_secret=os.getenv("TWITTER_ACCESS_TOKEN_SECRET"),
         openai_api_key=os.getenv("OPENAI_API_KEY"),
-        openai_model=os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
+        openai_model=os.getenv("OPENAI_MODEL", "gpt-4-turbo")
     )
 
 __all__ = ["load_settings"]

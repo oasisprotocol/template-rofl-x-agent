@@ -14,4 +14,4 @@ class Settings:
     twitter_access_token: str
     twitter_access_token_secret: str
     openai_api_key: str
-    openai_model: str = "gpt-3.5-turbo"
+    openai_model: str = "gpt-4-turbo"

@@ -34,18 +34,24 @@ secrets:
     type: text
     required: true
     placeholder: "You are a friendly tech enthusiast who shares insights about AI and technology..."
-  - name: TWITTER_CONSUMER_KEY
-    title: "Twitter Consumer Key"
-    description: "Your Twitter API consumer key (from Twitter Developer Portal)."
-    type: text
-    required: true
-    placeholder: "your_consumer_key"
-  - name: TWITTER_CONSUMER_SECRET
-    title: "Twitter Consumer Secret"
-    description: "Your Twitter API consumer secret (from Twitter Developer Portal)."
+  - name: TWITTER_BEARER_TOKEN
+    title: "Twitter Bearer Token"
+    description: "Your Twitter Bearer token (from Twitter Developer Portal)."
     type: password
     required: true
-    placeholder: "your_consumer_secret"
+    placeholder: "your_bearer_token"
+  - name: TWITTER_API_KEY
+    title: "Twitter API Key"
+    description: "Your Twitter API key (from Twitter Developer Portal)."
+    type: text
+    required: true
+    placeholder: "your_api_key"
+  - name: TWITTER_API_SECRET
+    title: "Twitter API Secret"
+    description: "Your Twitter API secret (from Twitter Developer Portal)."
+    type: password
+    required: true
+    placeholder: "your_api_secret"
   - name: TWITTER_ACCESS_TOKEN
     title: "Twitter Access Token"
     description: "Your Twitter API access token (from Twitter Developer Portal)."
@@ -65,11 +71,18 @@ secrets:
     required: true
     placeholder: "sk-..."
   - name: OPENAI_MODEL
-    title: "OpenAI Model (Optional)"
-    description: "The OpenAI model to use. Defaults to gpt-3.5-turbo."
-    type: text
+    title: "OpenAI Model"
+    description: "Select the OpenAI model to use for generating tweets"
+    type: select
     required: false
-    placeholder: "gpt-3.5-turbo"
+    options:
+      - "gpt-3.5-turbo": "GPT-3.5 Turbo (Fast & Cost-effective)"
+      - "gpt-4o-mini": "GPT-4o Mini (Balanced performance)"
+      - "gpt-4o": "GPT-4o (Most capable)"
+      - "gpt-4-turbo": "GPT-4 Turbo (High quality)"
+      - "gpt-4": "GPT-4 (Legacy)"
+      - "o1-mini": "O1 Mini (Reasoning focused)"
+      - "o1": "O1 (Advanced reasoning)"
 
 compose: |
   services:
@@ -81,8 +94,9 @@ compose: |
       platform: linux/amd64
       environment:
         - SYSTEM_PROMPT=${SYSTEM_PROMPT}
-        - TWITTER_CONSUMER_KEY=${TWITTER_CONSUMER_KEY}
-        - TWITTER_CONSUMER_SECRET=${TWITTER_CONSUMER_SECRET}
+        - TWITTER_BEARER_TOKEN=${TWITTER_BEARER_TOKEN}
+        - TWITTER_API_KEY=${TWITTER_API_KEY}
+        - TWITTER_API_SECRET=${TWITTER_API_SECRET}
         - TWITTER_ACCESS_TOKEN=${TWITTER_ACCESS_TOKEN}
         - TWITTER_ACCESS_TOKEN_SECRET=${TWITTER_ACCESS_TOKEN_SECRET}
         - OPENAI_API_KEY=${OPENAI_API_KEY}

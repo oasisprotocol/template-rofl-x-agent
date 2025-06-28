@@ -38,6 +38,7 @@ class PersonaBot:
         """Initialize the bot and its connections."""
         logger.info("Initializing Twitter Persona Bot")
         logger.info(f"Persona: {self.settings.system_prompt}")
+        logger.info(f"OpenAI Model: {self.settings.openai_model}")
         self.twitter_client.connect()
         
     def post_tweet(self) -> bool:
