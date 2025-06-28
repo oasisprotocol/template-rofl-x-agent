@@ -14,8 +14,12 @@ class TweetScheduler:
     def __init__(self):
         pass
         
-    def schedule_tweets(self, tweet_callback: Callable) -> None:
-        """Schedule tweets every hour."""
+    def schedule_tweets(self, tweet_callback: Callable[[], bool]) -> None:
+        """Schedule tweets every hour.
+        
+        Args:
+            tweet_callback: Callback function to execute for posting tweets
+        """
         schedule.every(1).hours.do(tweet_callback)
         logger.info("Scheduled to tweet every hour")
         

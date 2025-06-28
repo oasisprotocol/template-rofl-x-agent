@@ -11,7 +11,6 @@ from src.core.persona_bot import PersonaBot
 
 logger = logging.getLogger(__name__)
 
-# Reduce noise from httpx logger
 logging.getLogger("httpx").setLevel(logging.WARNING)
 
 
@@ -48,25 +47,20 @@ async def main() -> None:
     shutdown_handler.setup_signal_handlers()
     
     try:
-        # Load configuration
         settings = load_settings()
         logger.info("Twitter Persona Bot starting...")
         
-        # Initialize bot
         bot = PersonaBot(settings)
         shutdown_handler.bot = bot
         
-        # Create bot task
         bot_task = asyncio.create_task(bot.run())
         shutdown_task = asyncio.create_task(shutdown_handler.wait_for_shutdown())
         
-        # Wait for either bot completion or shutdown signal
         done, pending = await asyncio.wait(
             [bot_task, shutdown_task],
             return_when=asyncio.FIRST_COMPLETED
         )
         
-        # Cancel pending tasks
         for task in pending:
             task.cancel()
             try:
@@ -74,7 +68,6 @@ async def main() -> None:
             except asyncio.CancelledError:
                 pass
                 
-        # If bot task completed with error, re-raise it
         for task in done:
             if task == bot_task and task.exception():
                 raise task.exception()

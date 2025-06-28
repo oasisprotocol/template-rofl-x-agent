@@ -3,7 +3,7 @@
 import logging
 from typing import Optional
 
-from tweepy import Client, API, OAuthHandler, TweepyException
+from tweepy import API, Client, OAuthHandler, TweepyException
 
 logger = logging.getLogger(__name__)
 
@@ -13,13 +13,13 @@ class TwitterClient:
     
     def __init__(
         self,
-        consumer_key: str,
-        consumer_secret: str,
+        api_key: str,
+        api_secret: str,
         access_token: str,
         access_token_secret: str
     ):
-        self.consumer_key = consumer_key
-        self.consumer_secret = consumer_secret
+        self.api_key = api_key
+        self.api_secret = api_secret
         self.access_token = access_token
         self.access_token_secret = access_token_secret
         
@@ -29,12 +29,12 @@ class TwitterClient:
     def connect(self) -> None:
         """Initialize Twitter API connections."""
         try:
-            auth = OAuthHandler(self.consumer_key, self.consumer_secret)
+            auth = OAuthHandler(self.api_key, self.api_secret)
             auth.set_access_token(self.access_token, self.access_token_secret)
             
             self._client = Client(
-                consumer_key=self.consumer_key,
-                consumer_secret=self.consumer_secret,
+                consumer_key=self.api_key,
+                consumer_secret=self.api_secret,
                 access_token=self.access_token,
                 access_token_secret=self.access_token_secret,
                 wait_on_rate_limit=True
@@ -49,7 +49,14 @@ class TwitterClient:
             raise
             
     def post_tweet(self, text: str) -> Optional[str]:
-        """Post a tweet and return the tweet ID."""
+        """Post a tweet and return the tweet ID.
+        
+        Args:
+            text: Tweet content to post
+            
+        Returns:
+            Tweet ID if successful, None otherwise
+        """
         if not self._client:
             raise RuntimeError("Twitter client not connected")
             
@@ -70,7 +77,11 @@ class TwitterClient:
         return None
         
     def verify_credentials(self) -> bool:
-        """Verify that the credentials are valid."""
+        """Verify that the credentials are valid.
+        
+        Returns:
+            True if credentials are valid, False otherwise
+        """
         if not self._api:
             return False
             

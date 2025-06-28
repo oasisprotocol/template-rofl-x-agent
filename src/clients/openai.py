@@ -1,9 +1,10 @@
 """OpenAI API client wrapper."""
 
 import logging
-from typing import Optional, List, Dict
+import time
+from typing import Dict, List, Optional
 
-import openai
+from openai import OpenAI
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +15,7 @@ class OpenAIClient:
     def __init__(self, api_key: str, model: str = "gpt-3.5-turbo"):
         self.api_key = api_key
         self.model = model
-        openai.api_key = api_key
+        self.client = OpenAI(api_key=api_key)
         
     def generate_completion(
         self,
@@ -23,10 +24,20 @@ class OpenAIClient:
         max_tokens: int = 100,
         max_retries: int = 3
     ) -> Optional[str]:
-        """Generate a completion using the OpenAI API."""
+        """Generate a completion using the OpenAI API.
+        
+        Args:
+            messages: List of message dictionaries for the chat
+            temperature: Sampling temperature (0.0 to 2.0)
+            max_tokens: Maximum tokens in response
+            max_retries: Maximum number of retry attempts
+            
+        Returns:
+            Generated text completion or None if failed
+        """
         for attempt in range(max_retries):
             try:
-                response = openai.ChatCompletion.create(
+                response = self.client.chat.completions.create(
                     model=self.model,
                     messages=messages,
                     temperature=temperature,
@@ -39,13 +50,19 @@ class OpenAIClient:
             except Exception as e:
                 logger.error(f"OpenAI API error (attempt {attempt + 1}): {e}")
                 if attempt < max_retries - 1:
-                    import time
                     time.sleep(2 ** attempt)
                     
         return None
         
     def generate_tweet(self, prompt: str) -> Optional[str]:
-        """Generate a tweet based on a prompt."""
+        """Generate a tweet based on a prompt.
+        
+        Args:
+            prompt: The prompt to generate a tweet from
+            
+        Returns:
+            Generated tweet text or None if failed
+        """
         messages = [
             {
                 "role": "system",

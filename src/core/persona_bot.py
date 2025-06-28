@@ -1,12 +1,13 @@
 """Main persona bot orchestrator."""
 
+import asyncio
 import logging
-import time
 
-from ..clients import TwitterClient, OpenAIClient
-from ..config import Settings
-from .tweet_generator import TweetGenerator
+from src.clients import OpenAIClient, TwitterClient
+from src.models.types import Settings
+
 from .scheduler import TweetScheduler
+from .tweet_generator import TweetGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -16,10 +17,11 @@ class PersonaBot:
     
     def __init__(self, settings: Settings):
         self.settings = settings
+        self.running = False
         
         self.twitter_client = TwitterClient(
-            consumer_key=settings.twitter_api_key,
-            consumer_secret=settings.twitter_api_secret,
+            api_key=settings.twitter_api_key,
+            api_secret=settings.twitter_api_secret,
             access_token=settings.twitter_access_token,
             access_token_secret=settings.twitter_access_token_secret
         )
@@ -39,7 +41,11 @@ class PersonaBot:
         self.twitter_client.connect()
         
     def post_tweet(self) -> bool:
-        """Generate and post a tweet."""
+        """Generate and post a tweet.
+        
+        Returns:
+            True if tweet was posted successfully, False otherwise
+        """
         try:
             tweet_text = self.tweet_generator.generate()
             if not tweet_text:
@@ -53,21 +59,23 @@ class PersonaBot:
             logger.error(f"Error posting tweet: {e}")
             return False
             
-    def run(self) -> None:
+    async def run(self) -> None:
         """Run the bot continuously."""
         self.initialize()
+        self.running = True
         
         self.post_tweet()
         
         self.scheduler.schedule_tweets(self.post_tweet)
-        
-        while True:
+        while self.running:
             try:
                 self.scheduler.run_pending()
-                time.sleep(60)
-            except KeyboardInterrupt:
-                logger.info("Bot stopped by user")
+                await asyncio.sleep(60)
+            except asyncio.CancelledError:
+                logger.info("Bot operation cancelled")
                 break
             except Exception as e:
                 logger.error(f"Unexpected error in main loop: {e}")
-                time.sleep(300)
+                await asyncio.sleep(300)
+                
+        logger.info("PersonaBot stopped")
