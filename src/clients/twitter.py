@@ -25,6 +25,7 @@ class TwitterClient:
         
         self._client: Optional[Client] = None
         self._api: Optional[API] = None
+        self._username: Optional[str] = None
         
     def connect(self) -> None:
         """Initialize Twitter API connections."""
@@ -42,7 +43,16 @@ class TwitterClient:
             
             self._api = API(auth, wait_on_rate_limit=True)
             
-            logger.info("Successfully connected to Twitter API")
+            try:
+                user = self._api.verify_credentials()
+                if user:
+                    self._username = user.screen_name
+                    logger.info(f"Successfully connected to Twitter API as @{self._username}")
+                else:
+                    logger.info("Successfully connected to Twitter API")
+            except Exception as e:
+                logger.warning(f"Could not retrieve username: {e}")
+                logger.info("Successfully connected to Twitter API")
             
         except Exception as e:
             logger.error(f"Failed to connect to Twitter API: {e}")
@@ -66,7 +76,12 @@ class TwitterClient:
             if response.data:
                 tweet_id = response.data['id']
                 logger.info(f"Successfully posted tweet: {text[:50]}...")
-                logger.info(f"Tweet URL: https://twitter.com/user/status/{tweet_id}")
+                
+                if self._username:
+                    logger.info(f"Tweet URL: https://twitter.com/{self._username}/status/{tweet_id}")
+                else:
+                    logger.info(f"Tweet posted with ID: {tweet_id}")
+                    
                 return tweet_id
                 
         except TweepyException as e:
