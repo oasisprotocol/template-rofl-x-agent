@@ -1,6 +1,6 @@
 services:
   x-agent:
-    image: docker.io/ahmedatoasis/x-agent
+    image: docker.io/ahmedatoasis/x-agent@sha256:2be6bb27d986af25a7c58fa50625d2863f6df7aa413343826351d0ffabdcc61c
     build:
       context: .
       dockerfile: Dockerfile
