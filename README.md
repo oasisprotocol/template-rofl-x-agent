@@ -9,7 +9,7 @@ An automated Twitter bot powered by Oasis Protocol's secure TEE infrastructure t
 1. Clone the repository:
 ```bash
 git clone https://github.com/oasisprotocol/template-rofl-x-agent.git
-cd x-agent
+cd template-rofl-x-agent
 ```
 
 2. Install dependencies:
